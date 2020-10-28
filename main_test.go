@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Weald Technology Trading
+// Copyright © 2020 Weald Technology Trading
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -11,31 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package wallet
+package wallet_test
 
 import (
-	"errors"
+	"os"
+	"testing"
 
-	keystorev4 "github.com/wealdtech/go-eth2-wallet-encryptor-keystorev4"
-	wtypes "github.com/wealdtech/go-eth2-wallet-types/v2"
+	e2types "github.com/wealdtech/go-eth2-types/v2"
 )
 
-var encryptor wtypes.Encryptor
-
-func init() {
-	encryptor = keystorev4.New()
-}
-
-// UseEncryptor sets an encryptor to use.
-func UseEncryptor(e wtypes.Encryptor) error {
-	if e == nil {
-		return errors.New("no encryptor supplied")
+func TestMain(m *testing.M) {
+	if err := e2types.InitBLS(); err != nil {
+		panic(err)
 	}
-	encryptor = e
-	return nil
-}
-
-// GetEncryptor returns the name of the current encryptor.
-func GetEncryptor() string {
-	return encryptor.Name()
+	os.Exit(m.Run())
 }

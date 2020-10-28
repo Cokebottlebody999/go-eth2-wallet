@@ -1,4 +1,4 @@
-// Copyright 2019, 2020 Weald Technology Trading
+// Copyright 2020 Weald Technology Trading
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,27 +15,25 @@ package wallet
 
 import (
 	"errors"
-
-	keystorev4 "github.com/wealdtech/go-eth2-wallet-encryptor-keystorev4"
-	wtypes "github.com/wealdtech/go-eth2-wallet-types/v2"
+	"strings"
 )
 
-var encryptor wtypes.Encryptor
-
-func init() {
-	encryptor = keystorev4.New()
-}
-
-// UseEncryptor sets an encryptor to use.
-func UseEncryptor(e wtypes.Encryptor) error {
-	if e == nil {
-		return errors.New("no encryptor supplied")
+// WalletAndAccountNames breaks an account in to wallet and account names.
+func WalletAndAccountNames(account string) (string, string, error) {
+	if len(account) == 0 {
+		return "", "", errors.New("invalid account format")
 	}
-	encryptor = e
-	return nil
-}
-
-// GetEncryptor returns the name of the current encryptor.
-func GetEncryptor() string {
-	return encryptor.Name()
+	index := strings.Index(account, "/")
+	if index == -1 {
+		// Just the wallet
+		return account, "", nil
+	}
+	if index == 0 {
+		return "", "", errors.New("invalid account format")
+	}
+	if index == len(account)-1 {
+		// Trailing /
+		return account[:index], "", nil
+	}
+	return account[:index], account[index+1:], nil
 }

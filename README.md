@@ -60,6 +60,8 @@ The following wallet types are available:
 
   - [nd](https://github.com/wealdtech/go-eth2-wallet-nd): this is a traditional non-deterministic wallet where private keys are generated randomly and have no relationship to each other.
   - [hd](https://github.com/wealdtech/go-eth2-wallet-hd): this is a hierarchical deterministic wallet where private keys are generated based on a seed phrase and path.
+  - [distributed](https://github.com/wealdtech/go-eth2-wallet-distributed): this is a wallet whose accounts form part of a distributed composite.
+
 
 Please refer to the documentation for each wallet type to understand its functionality and available options.
 
@@ -99,7 +101,7 @@ func main() {
 }
 ```
 
-#### Creating a new wallet the Amazon S3 store
+#### Creating a new wallet on the Amazon S3 store
 
 ```go
 import (
@@ -199,7 +201,7 @@ func main() {
     // Always immediately defer locking the wallet to ensure it does not remain unlocked outside of the function.
     defer account.Lock()
 
-    signature, err := account.Sign([]byte("some data to sign"), 0 /* domain */)
+    signature, err := account.Sign([]byte("some data to sign"))
     if err != nil {
         panic(err)
     }
@@ -207,7 +209,7 @@ func main() {
     // as defer it as per above.
     account.Lock()
     
-    verified := signature.Verify([]byte("some data to sign"), account.PublicKey(), 0 /* domain */)
+    verified := signature.Verify([]byte("some data to sign"), account.PublicKey())
     if !verified {
         panic(errors.New("failed to verify signature"))
     }
